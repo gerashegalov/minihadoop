@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+  <!-- specific to node -->
+  <property>
+    <name>dfs.nameservice.id</name>
+    <value>${my.dfs.nameservice.id}</value>
+  </property>
+  <property>
+    <name>dfs.name.dir</name>
+    <value>${my.hdfs.home.dir}/name</value>
+  </property>
+  <property>
+    <name>dfs.checkpoint.dir</name>
+    <value>${my.hdfs.home.dir}/namesecondary</value>
+  </property>
+  <property>
+    <name>dfs.data.dir</name>
+    <value>${my.hdfs.home.dir}/data</value>
+  </property>
+  <property>
+    <name>dfs.datanode.address</name>
+    <value>${my.dfs.datanode.address}</value>
+  </property>
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>${my.dfs.datanode.http.address}</value>
+  </property>
+  <property>
+    <name>dfs.datanode.ipc.address</name>
+    <value>${my.dfs.datanode.ipc.address}</value>
+  </property>
+  <!-- end: specific to node -->
+
+  <property>
+    <name>dfs.nameservices</name>
+    <value>ns1,ns2</value>
+  </property>
+  <property>
+    <name>dfs.ha.namenodes.ns1</name>
+    <value>nn-ns1</value>
+  </property>
+  <property>
+    <name>dfs.ha.namenodes.ns2</name>
+    <value>nn-ns2</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-address.ns1.nn-ns1</name>
+    <value>localhost:8020</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address.ns1.nn-ns1</name>
+    <value>localhost:50070</value>
+  </property>
+  <property>
+    <name>dfs.namenode.secondaryhttp-address.ns1.nn-ns1</name>
+    <value>localhost:50090</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-address.ns2.nn-ns2</name>
+    <value>localhost:9020</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address.ns2.nn-ns2</name>
+    <value>localhost:60070</value>
+  </property>
+  <property>
+    <name>dfs.namenode.secondaryhttp-address.ns2.nn-ns2</name>
+    <value>localhost:60090</value>
+  </property>
+  <property>
+    <name>dfs.replication</name>
+    <value>2</value>
+  </property>
+  <property>
+    <name>dfs.enable.federation.redirect</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.client.failover.proxy.provider.ns1</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
+  <property>
+    <name>dfs.client.failover.proxy.provider.ns2</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
+  <!--property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>true</value>
+  </property-->
+  <property>
+    <name>dfs.block.local-path-access.user</name>
+    <value>gshegalov</value>
+  </property>
+</configuration>

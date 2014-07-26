@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>${my.hadoop.tmp.dir}</value>
+  </property>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>viewfs:///</value>
+  </property>
+  <property>
+    <name>fs.viewfs.mounttable.default.link./user</name>
+    <value>hdfs://ns1/user</value> 
+  </property>
+  <property>
+    <name>fs.viewfs.mounttable.default.link./tmp</name>
+    <value>hdfs://ns2/tmp</value> 
+  </property>
+</configuration>

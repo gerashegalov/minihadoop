@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<configuration>
+  <!-- node specific: begin -->
+  <property>
+    <name>yarn.nodemanager.localizer.address</name>
+    <value>${my.yarn.nodemanager.localizer.address}</value>
+  </property> 
+  <property>
+    <name>yarn.nodemanager.address</name>
+    <value>${my.yarn.nodemanager.address}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.webapp.address</name>
+    <value>${my.yarn.nodemanager.webapp.address}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.health-checker.script.opts</name>
+    <value>${my.decommission.file}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>${my.yarn.nodemanager.log-dirs}</value>
+  </property>
+
+  <!-- node specific: end -->
+
+  <property>
+    <name>yarn.nm.liveness-monitor.expiry-interval-ms</name>
+    <value>60000</value>
+  </property>
+  <property>
+    <name>yarn.am.liveness-monitor.expiry-interval-ms</name>
+    <value>60000</value>
+  </property>
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>http://${mapreduce.jobhistory.webapp.address}/jobhistory/logs</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.scheduler.class</name>
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.unheathy.drain.containers</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.nodes.exclude-path</name>
+    <value>/tmp/yarn-exclude</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.health-checker.interval-ms</name>
+    <value>10000</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.health-checker.script.timeout-ms</name>
+    <value>10000</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.health-checker.script.path</name>
+    <value>/Users/gshegalov/bin/health.sh</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+</configuration>

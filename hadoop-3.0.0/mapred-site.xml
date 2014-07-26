@@ -1,0 +1,29 @@
+<configuration>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+  <property>
+    <name>mapreduce.shuffle.port</name>
+    <value>${my.mapreduce.shuffle.port}</value>
+  </property>
+
+  <property>
+    <name>yarn.app.mapreduce.am.staging-dir</name>
+    <value>/user</value>
+  </property>
+
+<!--
+  <property>
+    <name>mapreduce.jobhistory.intermediate-done-dir</name>
+    <value>${yarn.app.mapreduce.am.staging-dir}/${ugi.current.user}/.staging/history/intermediate</value>
+  </property>
+
+  <property>
+    <name>mapreduce.jobhistory.done-dir</name>
+    <value>${yarn.app.mapreduce.am.staging-dir}/${ugi.current.user}/.staging/history/done</value>
+  </property>
+-->
+
+</configuration>
+
