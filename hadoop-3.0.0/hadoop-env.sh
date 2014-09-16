@@ -24,7 +24,6 @@
 # remote nodes.
 
 # The java implementation to use.
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home
 #export HADOOP_ROOT_LOGGER=ALL,RFA
 #export YARN_ROOT_LOGGER=ALL,RFA
 
