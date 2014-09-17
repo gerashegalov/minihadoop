@@ -10,23 +10,29 @@ export HADOOP_LOG_DIR=${PWD}/logs
 export YARN_LOG_DIR=${PWD}/logs
 export HADOOP_MAPRED_LOG_DIR=${PWD}/logs
 
+export G_HADOOP_VERSION=$(hadoop version | grep Hadoop | grep -o '\d\+\(\.\d\+\)\+')
+
 #
 # node specific opts
 #
 
 HDFS_NODE1_OPTS="-Dmy.dfs.nameservice.id=ns1
   -Dmy.hadoop.tmp.dir=${PWD}/tmp1
-  -Dmy.hdfs.home.dir=${PWD}/hdfs1
+  -Dmy.hdfs.home.dir=${PWD}/hdfs1-${G_HADOOP_VERSION}
   -Dmy.dfs.datanode.address=0.0.0.0:50010
   -Dmy.dfs.datanode.http.address=0.0.0.0:50075
   -Dmy.dfs.datanode.ipc.address=0.0.0.0:50020"
 
 HDFS_NODE2_OPTS="-Dmy.dfs.nameservice.id=ns2
   -Dmy.hadoop.tmp.dir=${PWD}/tmp2
-  -Dmy.hdfs.home.dir=${PWD}/hdfs2
+  -Dmy.hdfs.home.dir=${PWD}/hdfs2-${G_HADOOP_VERSION}
   -Dmy.dfs.datanode.address=0.0.0.0:50110
   -Dmy.dfs.datanode.http.address=0.0.0.0:50175
   -Dmy.dfs.datanode.ipc.address=0.0.0.0:50120"
+
+HDFS_OPTS[1]=${HDFS_NODE1_OPTS}
+HDFS_OPTS[2]=${HDFS_NODE2_OPTS}
+
 
 YARN_NODE1_OPTS="
   -Dmy.hadoop.tmp.dir=${PWD}/tmp1
@@ -46,16 +52,27 @@ YARN_NODE2_OPTS="
   -Dmy.mapreduce.shuffle.port=13563
   -Dmy.decommission.file=/tmp/decommission2"
 
+YARN_OPTS[1]=${YARN_NODE1_OPTS}
+YARN_OPTS[2]=${YARN_NODE2_OPTS}
+
+nodeEnv() {
+  export HADOOP_IDENT_STRING=${USER}-node${1}
+  export HADOOP_HDFS_IDENT_STRING="${HADOOP_IDENT_STRING}"
+  export HADOOP_NAMENODE_OPTS="${HDFS_OPTS[${1}]}"
+  export HADOOP_DATANODE_OPTS="${HDFS_OPTS[${1}]}"
+  export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
+  export YARN_RESOURCEMANAGER_OPTS="-Dmy.hadoop.tmp.dir=${PWD}/tmp${1}"
+  export YARN_NODEMANAGER_OPTS="${YARN_OPTS[${1}]}"
+  export HADOOP_MAPREDUCE_IDENT_STRING="${HADOOP_IDENT_STRING}"
+}
+
 if [ "${1}" == "format" ]; then
   clid="MY.CID-$(date +%s)"
-
-  export HADOOP_IDENT_STRING=${USER}-node1
-  export HADOOP_NAMENODE_OPTS="${HDFS_NODE1_OPTS}"
+  nodeEnv "1"
   ${G_HADOOP_HOME}/bin/hdfs namenode -format -clusterId ${clid}
 
-  export HADOOP_IDENT_STRING=${USER}-node2
-  export HADOOP_NAMENODE_OPTS="${HDFS_NODE2_OPTS}"
-  ${G_HADOOP_HOME}/bin/hdfs namenode -format -clusterId ${clid} 
+  nodeEnv "2"
+  ${G_HADOOP_HOME}/bin/hdfs namenode -format -clusterId ${clid}
 
   exit 0
 fi
@@ -63,13 +80,11 @@ fi
 if [ "${1}" == "upgrade" ] || [ "${1}" == "finalize" ]; then
   clid="MY.CID-$(date +%s)"
 
-  export HADOOP_IDENT_STRING=${USER}-node1
-  export HADOOP_NAMENODE_OPTS="${HDFS_NODE1_OPTS}"
-  ${G_HADOOP_HOME}/bin/hdfs namenode -${1} 
+  nodeEnv "1"
+  ${G_HADOOP_HOME}/bin/hdfs namenode -${1}
 
-  export HADOOP_IDENT_STRING=${USER}-node2
-  export HADOOP_NAMENODE_OPTS="${HDFS_NODE2_OPTS}"
-  ${G_HADOOP_HOME}/bin/hdfs namenode -${1} 
+  nodeEnv "2"
+  ${G_HADOOP_HOME}/bin/hdfs namenode -${1}
 
   exit 0
 fi
@@ -96,37 +111,20 @@ esac
 
 if [ "${NODE1}" == "yes" ]; then
   echo "${CMD} node1 daemons"
-  export HADOOP_IDENT_STRING=${USER}-node1
-
-  export HADOOP_NAMENODE_OPTS="${HDFS_NODE1_OPTS}"
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} namenode   
-  export HADOOP_DATANODE_OPTS="${HDFS_NODE1_OPTS}" 
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} datanode   
-
-  export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
-
-  export YARN_RESOURCEMANAGER_OPTS="-Dmy.hadoop.tmp.dir=${PWD}/tmp1"
+  nodeEnv "1"
+  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} namenode
+  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} datanode
   ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} resourcemanager
-
-  export YARN_NODEMANAGER_OPTS="${YARN_NODE1_OPTS}"
-  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} nodemanager  
-
-  export HADOOP_MAPREDUCE_IDENT_STRING="$HADOOP_IDENT_STRING"
+  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} nodemanager
   ${G_HADOOP_HOME}/sbin//mr-jobhistory-daemon.sh --config ${PWD} ${CMD} \
     historyserver
 fi
 
 if [ "${NODE2}" == "yes" ]; then
   echo "${CMD} node2 daemons"
-  export HADOOP_IDENT_STRING=${USER}-node2
-    
-  export HADOOP_NAMENODE_OPTS="${HDFS_NODE2_OPTS}" 
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} namenode   
-  export HADOOP_DATANODE_OPTS="${HDFS_NODE2_OPTS}"
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} datanode   
-
-  export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
-  export YARN_NODEMANAGER_OPTS="${YARN_NODE2_OPTS}"
-  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} nodemanager   
+  nodeEnv "2"
+  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} namenode
+  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} datanode
+  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} nodemanager
 fi
 
