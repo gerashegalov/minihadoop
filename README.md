@@ -10,4 +10,4 @@ Let us denote the local path at which Hadoop repo is checked out /path/hadoopsrc
 ```bash
 /path/hadoopsrc$ mvn clean package -Pdist -DskipTests -Dmaven.javadoc.skip
 ```
-This creates a runnable distribution location under /path/hadoopsrc/hadoop-dist/target/hadoop-<version>
+This creates a runnable distribution location under ```/path/hadoopsrc/hadoop-dist/target/hadoop-<version>```
