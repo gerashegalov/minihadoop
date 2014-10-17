@@ -72,4 +72,8 @@
     <name>yarn.log-aggregation-enable</name>
     <value>true</value>
   </property>
+  <property>
+    <name>yarn.tracking.url.generator</name>
+    <value>org.apache.hadoop.mapreduce.v2.hs.webapp.MapReduceTrackingUriPlugin</value>
+  </property>
 </configuration>
