@@ -47,27 +47,27 @@
   </property>
   <property>
     <name>dfs.namenode.rpc-address.ns1.nn-ns1</name>
-    <value>localhost:8020</value>
+    <value>${my.node}:8020</value>
   </property>
   <property>
     <name>dfs.namenode.http-address.ns1.nn-ns1</name>
-    <value>localhost:50070</value>
+    <value>${my.node}:50070</value>
   </property>
   <property>
     <name>dfs.namenode.secondaryhttp-address.ns1.nn-ns1</name>
-    <value>localhost:50090</value>
+    <value>${my.node}:50090</value>
   </property>
   <property>
     <name>dfs.namenode.rpc-address.ns2.nn-ns2</name>
-    <value>localhost:9020</value>
+    <value>${my.node}:9020</value>
   </property>
   <property>
     <name>dfs.namenode.http-address.ns2.nn-ns2</name>
-    <value>localhost:60070</value>
+    <value>${my.node}:60070</value>
   </property>
   <property>
     <name>dfs.namenode.secondaryhttp-address.ns2.nn-ns2</name>
-    <value>localhost:60090</value>
+    <value>${my.node}:60090</value>
   </property>
   <property>
     <name>dfs.replication</name>

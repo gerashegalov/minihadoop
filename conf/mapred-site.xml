@@ -1,5 +1,9 @@
 <configuration>
   <property>
+    <name>mapreduce.jobhistory.webapp.address</name>
+    <value>${my.node}:19888</value>
+  </property>
+  <property>
     <name>mapreduce.framework.name</name>
     <value>yarn</value>
   </property>

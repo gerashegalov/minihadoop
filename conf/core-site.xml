@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <property>
+    <name>my.node</name>
+    <value>localhost</value>
+  </property>
+  <property>
     <name>hadoop.tmp.dir</name>
     <value>${my.hadoop.tmp.dir}</value>
   </property>

@@ -12,6 +12,7 @@ export HADOOP_MAPRED_LOG_DIR=${PWD}/logs
 
 export G_HADOOP_VERSION=$(hadoop version | grep Hadoop | grep -o '\d\+\(\.\d\+\)\+')
 
+
 #
 # node specific opts
 #
@@ -19,16 +20,16 @@ export G_HADOOP_VERSION=$(hadoop version | grep Hadoop | grep -o '\d\+\(\.\d\+\)
 HDFS_NODE1_OPTS="-Dmy.dfs.nameservice.id=ns1
   -Dmy.hadoop.tmp.dir=${PWD}/tmp1
   -Dmy.hdfs.home.dir=${PWD}/hdfs1-${G_HADOOP_VERSION}
-  -Dmy.dfs.datanode.address=0.0.0.0:50010
-  -Dmy.dfs.datanode.http.address=0.0.0.0:50075
-  -Dmy.dfs.datanode.ipc.address=0.0.0.0:50020"
+  -Dmy.dfs.datanode.address=localhost:50010
+  -Dmy.dfs.datanode.http.address=localhost:50075
+  -Dmy.dfs.datanode.ipc.address=localhost:50020"
 
 HDFS_NODE2_OPTS="-Dmy.dfs.nameservice.id=ns2
   -Dmy.hadoop.tmp.dir=${PWD}/tmp2
   -Dmy.hdfs.home.dir=${PWD}/hdfs2-${G_HADOOP_VERSION}
-  -Dmy.dfs.datanode.address=0.0.0.0:50110
-  -Dmy.dfs.datanode.http.address=0.0.0.0:50175
-  -Dmy.dfs.datanode.ipc.address=0.0.0.0:50120"
+  -Dmy.dfs.datanode.address=localhost:50110
+  -Dmy.dfs.datanode.http.address=localhost:50175
+  -Dmy.dfs.datanode.ipc.address=localhost:50120"
 
 HDFS_OPTS[1]=${HDFS_NODE1_OPTS}
 HDFS_OPTS[2]=${HDFS_NODE2_OPTS}
@@ -37,18 +38,18 @@ HDFS_OPTS[2]=${HDFS_NODE2_OPTS}
 YARN_NODE1_OPTS="
   -Dmy.hadoop.tmp.dir=${PWD}/tmp1
   -Dmy.yarn.nodemanager.log-dirs=${PWD}/userlogs1
-  -Dmy.yarn.nodemanager.localizer.address=0.0.0.0:8040
-  -Dmy.yarn.nodemanager.address=0.0.0.0:8041
-  -Dmy.yarn.nodemanager.webapp.address=0.0.0.0:8042
+  -Dmy.yarn.nodemanager.localizer.address=localhost:8040
+  -Dmy.yarn.nodemanager.address=localhost:8041
+  -Dmy.yarn.nodemanager.webapp.address=localhost:8042
   -Dmy.mapreduce.shuffle.port=13562
   -Dmy.decommission.file=/tmp/decommission1"
 
 YARN_NODE2_OPTS="
   -Dmy.hadoop.tmp.dir=${PWD}/tmp2
   -Dmy.yarn.nodemanager.log-dirs=${PWD}/userlogs2
-  -Dmy.yarn.nodemanager.localizer.address=0.0.0.0:8140
-  -Dmy.yarn.nodemanager.address=0.0.0.0:8141
-  -Dmy.yarn.nodemanager.webapp.address=0.0.0.0:8142
+  -Dmy.yarn.nodemanager.localizer.address=localhost:8140
+  -Dmy.yarn.nodemanager.address=localhost:8141
+  -Dmy.yarn.nodemanager.webapp.address=localhost:8142
   -Dmy.mapreduce.shuffle.port=13563
   -Dmy.decommission.file=/tmp/decommission2"
 
@@ -58,11 +59,11 @@ YARN_OPTS[2]=${YARN_NODE2_OPTS}
 nodeEnv() {
   export HADOOP_IDENT_STRING=${USER}-node${1}
   export HADOOP_HDFS_IDENT_STRING="${HADOOP_IDENT_STRING}"
-  export HADOOP_NAMENODE_OPTS="${HDFS_OPTS[${1}]} ${HADOOP_NAMENODE_OPTS}"
-  export HADOOP_DATANODE_OPTS="${HDFS_OPTS[${1}]} ${HADOOP_DATANODE_OPTS}"
+  export HADOOP_NAMENODE_OPTS="${HDFS_OPTS[${1}]}"
+  export HADOOP_DATANODE_OPTS="${HDFS_OPTS[${1}]}"
   export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
-  export YARN_RESOURCEMANAGER_OPTS="-Dmy.hadoop.tmp.dir=${PWD}/tmp${1} ${YARN_RESOURCEMANAGER_OPTS}"
-  export YARN_NODEMANAGER_OPTS="${YARN_OPTS[${1}]} ${YARN_NODEMANAGER_OPTS}"
+  export YARN_RESOURCEMANAGER_OPTS="${YARN_OPTS[${1}]}"
+  export YARN_NODEMANAGER_OPTS="${YARN_OPTS[${1}]}"
   export HADOOP_MAPREDUCE_IDENT_STRING="${HADOOP_IDENT_STRING}"
 }
 
