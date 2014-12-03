@@ -3,10 +3,12 @@
     <name>mapreduce.jobhistory.webapp.address</name>
     <value>${my.node}:19888</value>
   </property>
+
   <property>
     <name>mapreduce.framework.name</name>
     <value>yarn</value>
   </property>
+
   <property>
     <name>mapreduce.shuffle.port</name>
     <value>${my.mapreduce.shuffle.port}</value>
@@ -21,13 +23,31 @@
     <name>yarn.app.mapreduce.am.env</name>
     <value>JAVA_HOME=${java.home}</value>
   </property>
+
   <property>
     <name>mapreduce.map.env</name>
     <value>${yarn.app.mapreduce.am.env}</value>
   </property>
+
   <property>
     <name>mapreduce.reduce.env</name>
     <value>${yarn.app.mapreduce.am.env}</value>
   </property>
+
+  <property>
+    <name>yarn.app.mapreduce.am.admin-command-opts</name>
+    <value>-Djava.awt.headless=true</value>
+  </property>
+
+  <property>
+    <name>mapreduce.admin.map.child.java.opts</name>
+    <value>-Djava.awt.headless=true</value>
+  </property>
+
+  <property>
+    <name>mapreduce.admin.reduce.child.java.opts</name>
+    <value>-Djava.awt.headless=true</value>
+  </property>
+
 </configuration>
 
