@@ -1,14 +1,16 @@
 #!/bin/bash
 
-if [ "${1}" == "-debug" ]; then
+if [ "${1}" == "--debug" ]; then
   shift
   set -x
 fi
 
+if [ "${1}" == "--old-bash" ]; then
+  OLD_BASH=1
+  shift
+fi
+
 cd ${HADOOP_CONF_DIR}
-export HADOOP_LOG_DIR=${PWD}/logs
-export YARN_LOG_DIR=${PWD}/logs
-export HADOOP_MAPRED_LOG_DIR=${PWD}/logs
 
 export G_HADOOP_VERSION=$(hadoop version | grep Hadoop | grep -o '\d\+\(\.\d\+\)\+')
 
@@ -57,14 +59,69 @@ YARN_OPTS[1]=${YARN_NODE1_OPTS}
 YARN_OPTS[2]=${YARN_NODE2_OPTS}
 
 nodeEnv() {
+  export HADOOP_LOG_DIR=${PWD}/logs
+
   export HADOOP_IDENT_STRING=${USER}-node${1}
-  export HADOOP_HDFS_IDENT_STRING="${HADOOP_IDENT_STRING}"
+  if [[ "${OLD_BASH}" == "1" ]]; then
+    export HADOOP_HDFS_IDENT_STRING="${HADOOP_IDENT_STRING}"
+    export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
+    export HADOOP_MAPREDUCE_IDENT_STRING="${HADOOP_IDENT_STRING}"
+    export YARN_LOG_DIR="${HADOOP_LOG_DIR}"
+    export HADOOP_MAPRED_LOG_DIR="${HADOOP_LOG_DIR}"
+  fi
   export HADOOP_NAMENODE_OPTS="${HDFS_OPTS[${1}]}"
   export HADOOP_DATANODE_OPTS="${HDFS_OPTS[${1}]}"
-  export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
   export YARN_RESOURCEMANAGER_OPTS="${YARN_OPTS[${1}]}"
   export YARN_NODEMANAGER_OPTS="${YARN_OPTS[${1}]}"
-  export HADOOP_MAPREDUCE_IDENT_STRING="${HADOOP_IDENT_STRING}"
+}
+
+runHdfsDaemon() {
+  if [ "${OLD_BASH}" == "1" ]; then
+    ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} ${1}
+  else
+    ${G_HADOOP_HOME}/bin/hdfs --config ${PWD} --daemon ${CMD} ${1}
+  fi
+}
+
+runYarnDaemon() {
+  if [ "${OLD_BASH}" == "1" ]; then
+    ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} ${1}
+  else
+    ${G_HADOOP_HOME}/bin/yarn --config ${PWD} --daemon ${CMD} ${1}
+  fi
+}
+
+runMapredDaemon() {
+  if [ "${OLD_BASH}" == "1" ]; then
+    ${G_HADOOP_HOME}/sbin//mr-jobhistory-daemon.sh --config ${PWD} ${CMD} ${1}
+  else
+    ${G_HADOOP_HOME}/bin/mapred --config ${PWD} --daemon ${CMD} ${1}
+  fi
+}
+
+runDaemons() {
+  while (( "$#" )); do
+    case "${1}" in
+      namenode)
+        runHdfsDaemon ${1}
+        ;;
+      datanode)
+        runHdfsDaemon ${1}
+        ;;
+      resourcemanager)
+        runYarnDaemon ${1}
+        ;;
+      nodemanager)
+        runYarnDaemon ${1}
+        ;;
+      historyserver)
+        runMapredDaemon ${1}
+        ;;
+      *)
+    esac
+
+    shift
+  done
 }
 
 if [ "${1}" == "format" ]; then
@@ -78,7 +135,7 @@ if [ "${1}" == "format" ]; then
   exit 0
 fi
 
-if [ "${1}" == "upgrade" ] || [ "${1}" == "finalize" ]; then
+if [ "${1}" == "upgrade" ] || [ "${1}" == "finalize" ] || [ "${1}" == "rollback" ]; then
   clid="MY.CID-$(date +%s)"
 
   nodeEnv "1"
@@ -111,21 +168,12 @@ case "${1}" in
 esac
 
 if [ "${NODE1}" == "yes" ]; then
-  echo "${CMD} node1 daemons"
   nodeEnv "1"
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} namenode
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} datanode
-  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} resourcemanager
-  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} nodemanager
-  ${G_HADOOP_HOME}/sbin//mr-jobhistory-daemon.sh --config ${PWD} ${CMD} \
-    historyserver
+  runDaemons namenode datanode resourcemanager nodemanager historyserver
 fi
 
 if [ "${NODE2}" == "yes" ]; then
-  echo "${CMD} node2 daemons"
   nodeEnv "2"
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} namenode
-  ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} datanode
-  ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} nodemanager
+  runDaemons namenode datanode nodemanager
 fi
 

@@ -85,4 +85,12 @@
     <name>yarn.tracking.url.generator</name>
     <value>org.apache.hadoop.mapreduce.v2.hs.webapp.MapReduceTrackingUriPlugin</value>
   </property>
+  <property>
+    <name>yarn.nodemanager.log-aggregation.compression-type</name>
+    <value>lzo</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.delete.debug-delay-sec</name>
+    <value>600</value>
+  </property>
 </configuration>
