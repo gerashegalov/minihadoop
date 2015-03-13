@@ -3,10 +3,7 @@
 <configuration>
 
   <!-- specific to node -->
-  <property>
-    <name>dfs.nameservice.id</name>
-    <value>${my.dfs.nameservice.id}</value>
-  </property>
+
   <property>
     <name>dfs.name.dir</name>
     <value>${my.hdfs.home.dir}/name</value>
@@ -19,18 +16,7 @@
     <name>dfs.data.dir</name>
     <value>${my.hdfs.home.dir}/data</value>
   </property>
-  <property>
-    <name>dfs.datanode.address</name>
-    <value>${my.dfs.datanode.address}</value>
-  </property>
-  <property>
-    <name>dfs.datanode.http.address</name>
-    <value>${my.dfs.datanode.http.address}</value>
-  </property>
-  <property>
-    <name>dfs.datanode.ipc.address</name>
-    <value>${my.dfs.datanode.ipc.address}</value>
-  </property>
+
   <!-- end: specific to node -->
 
   <property>

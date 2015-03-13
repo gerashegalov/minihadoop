@@ -13,10 +13,6 @@
     <value>com.hadoop.compression.lzo.LzoCodec</value>
   </property>
   <property>
-    <name>hadoop.tmp.dir</name>
-    <value>${my.hadoop.tmp.dir}</value>
-  </property>
-  <property>
     <name>fs.defaultFS</name>
     <value>viewfs:///</value>
   </property>
