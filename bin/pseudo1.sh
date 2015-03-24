@@ -17,7 +17,7 @@ fi
 
 cd ${HADOOP_CONF_DIR}
 
-G_HADOOP_VERSION=$(hadoop version | grep Hadoop | grep -o '\d\+\(\.\d\+\)\+')
+G_HADOOP_VERSION=$(${G_HADOOP_HOME}/bin/hadoop version | grep Hadoop | grep -o '\d\+\(\.\d\+\)\+')
 
 
 #
@@ -55,24 +55,23 @@ YARN_KEYS[2]="-Dhadoop.tmp.dir=${PWD}/tmp2
   -Dmapreduce.shuffle.port=13563"
 
 nodeEnv() {
-  unset NODE_ENV
+  export HADOOP_LOG_DIR=${PWD}/logs
+  export HADOOP_IDENT_STRING=${USER}-node${1}
 
-  NODE_ENV="HADOOP_LOG_DIR=${PWD}/logs ${NODE_ENV}"
-  NODE_ENV="HADOOP_IDENT_STRING=${USER}-node${1} ${NODE_ENV}"
   if [[ "${OLD_BASH}" == "1" ]]; then
-    NODE_ENV="HADOOP_HDFS_IDENT_STRING=${HADOOP_IDENT_STRING} ${NODE_ENV}"
-    NODE_ENV="YARN_IDENT_STRING=${HADOOP_IDENT_STRING} ${NODE_ENV}"
-    NODE_ENV="HADOOP_MAPREDUCE_IDENT_STRING=${HADOOP_IDENT_STRING} ${NODE_ENV}"
-    NODE_ENV="YARN_LOG_DIR=${HADOOP_LOG_DIR} ${NODE_ENV}"
-    NODE_ENV="HADOOP_MAPRED_LOG_DIR=${HADOOP_LOG_DIR} ${NODE_ENV}"
+    export HADOOP_HDFS_IDENT_STRING=${HADOOP_IDENT_STRING}
+    export YARN_IDENT_STRING=${HADOOP_IDENT_STRING}
+    export HADOOP_MAPREDUCE_IDENT_STRING=${HADOOP_IDENT_STRING}
+    export YARN_LOG_DIR=${HADOOP_LOG_DIR}
+    export HADOOP_MAPRED_LOG_DIR=${HADOOP_LOG_DIR}
   fi
 }
 
 runHdfsDaemon() {
   if [ "${OLD_BASH}" == "1" ]; then
-    cmd="${NODE_ENV} ${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} ${2} ${HDFS_KEYS[${1}]}"
+    cmd="${G_HADOOP_HOME}/sbin/hadoop-daemon.sh --config ${PWD} ${CMD} ${2} ${HDFS_KEYS[${1}]}"
   else
-    cmd="${NODE_ENV} ${G_HADOOP_HOME}/bin/hdfs --config ${PWD} --daemon ${CMD} ${2} ${HDFS_KEYS[${1}]}"
+    cmd="${G_HADOOP_HOME}/bin/hdfs --config ${PWD} --daemon ${CMD} ${2} ${HDFS_KEYS[${1}]}"
   fi
 
   if [ "${PRINT}" == "1" ]; then
@@ -84,9 +83,9 @@ runHdfsDaemon() {
 
 runYarnDaemon() {
   if [ "${OLD_BASH}" == "1" ]; then
-    cmd="${NODE_ENV} ${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} ${2} ${YARN_KEYS[${1}]}"
+    cmd="${G_HADOOP_HOME}/sbin/yarn-daemon.sh --config ${PWD} ${CMD} ${2} ${YARN_KEYS[${1}]}"
   else
-    cmd="${NODE_ENV} ${G_HADOOP_HOME}/bin/yarn --config ${PWD} --daemon ${CMD} ${2} ${YARN_KEYS[${1}]}"
+    cmd="${G_HADOOP_HOME}/bin/yarn --config ${PWD} --daemon ${CMD} ${2} ${YARN_KEYS[${1}]}"
   fi
 
   if [ "${PRINT}" == "1" ]; then
@@ -98,9 +97,9 @@ runYarnDaemon() {
 
 runMapredDaemon() {
   if [ "${OLD_BASH}" == "1" ]; then
-    cmd="${NODE_ENV} ${G_HADOOP_HOME}/sbin//mr-jobhistory-daemon.sh --config ${PWD} ${CMD} ${1}"
+    cmd="${G_HADOOP_HOME}/sbin//mr-jobhistory-daemon.sh --config ${PWD} ${CMD} ${1}"
   else
-    cmd="${NODE_ENV} ${G_HADOOP_HOME}/bin/mapred --config ${PWD} --daemon ${CMD} ${1}"
+    cmd="${G_HADOOP_HOME}/bin/mapred --config ${PWD} --daemon ${CMD} ${1}"
   fi
 
   if [ "${PRINT}" == "1" ]; then
